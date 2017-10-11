@@ -1,6 +1,7 @@
 package noosc.project.otrs.bakingapp.UI;
 
 import android.annotation.SuppressLint;
+import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -48,6 +49,9 @@ public class DetailStep extends AppCompatActivity {
     private int currentWindow;
     private long playbackPosition;
     private String videoUrl;
+    private int position;
+    private StepModel[] stepList;
+
 
     private static final String TAG = "DetailStep";
 
@@ -57,8 +61,17 @@ public class DetailStep extends AppCompatActivity {
         setContentView(R.layout.detail_step);
         ButterKnife.bind(this);
 
-        String stepJson = getIntent().getExtras().getString("step");
-        StepModel stepModel = new GsonBuilder().create().fromJson(stepJson, StepModel.class);
+//        //untuk ngambil banyaknya step
+//        String stepJson = getIntent().getExtras().getString("step");
+//        StepModel stepModel = new GsonBuilder().create().fromJson(stepJson, StepModel.class);
+
+        //untuk ngambil banyaknya position
+        position = getIntent().getExtras().getInt("position");
+
+        String stepListJson =  getIntent().getExtras().getString("stepList");
+        stepList = new GsonBuilder().create().fromJson(stepListJson, StepModel[].class);
+        StepModel stepModel = stepList[position];
+
         stepModel.getShortDescription();
         setTitle(stepModel.getShortDescription());
         Log.v("STEP MODEL", "" + stepModel.getShortDescription());
@@ -66,14 +79,14 @@ public class DetailStep extends AppCompatActivity {
         textJudul.setText(stepModel.getShortDescription());
         textStepIntroduction.setText(stepModel.getDescription());
         videoUrl = stepModel.getVideoURL();
-        stepModel.getId();
         Log.d(TAG, "TES ID: "+stepModel.getId());
 
-        if (stepModel.getId()==0){
+        if (position==0){
             buttonPrev.setVisibility(View.GONE);
         }
-        else {
-            buttonPrev.setVisibility(View.VISIBLE);
+
+        if(position==stepList.length-1){
+            buttonNext.setVisibility(View.GONE);
         }
 
     }
@@ -167,14 +180,24 @@ public class DetailStep extends AppCompatActivity {
     @OnClick(R.id.nextButton)
     public void NextButton(View v) {
 
-        Toast.makeText(this, "Next Step", Toast.LENGTH_SHORT).show();
+//        Toast.makeText(this, "Next Step", Toast.LENGTH_SHORT).show();
 
-
+        Intent intent = new Intent(v.getContext(), DetailStep.class);
+        intent.putExtra("position", position+1);
+        intent.putExtra("stepList", new GsonBuilder().create().toJson(stepList));
+        v.getContext().startActivity(intent);
+        finish();
     }
 
     @OnClick(R.id.prevButton)
     public void PrevButton(View v) {
 
-        Toast.makeText(this, "Prev Step", Toast.LENGTH_SHORT).show();
+//        Toast.makeText(this, "Prev Step", Toast.LENGTH_SHORT).show();
+
+        Intent intent = new Intent(v.getContext(), DetailStep.class);
+        intent.putExtra("position", position-1);
+        intent.putExtra("stepList", new GsonBuilder().create().toJson(stepList));
+        v.getContext().startActivity(intent);
+        finish();
     }
 }

@@ -17,6 +17,7 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import noosc.project.otrs.bakingapp.Model.StepModel;
 import noosc.project.otrs.bakingapp.R;
+import noosc.project.otrs.bakingapp.StepListener;
 import noosc.project.otrs.bakingapp.UI.DetailRecipe;
 import noosc.project.otrs.bakingapp.UI.DetailStep;
 
@@ -28,9 +29,11 @@ public class AdapterSteps extends RecyclerView.Adapter<AdapterSteps.RecipeSteps>
 
 
     private final List<StepModel> steps;
+    private final StepListener listener;
 
-    public AdapterSteps(List<StepModel> steps) {
+    public AdapterSteps(List<StepModel> steps, StepListener listener) {
         this.steps = steps;
+        this.listener = listener;
     }
 
     @Override
@@ -64,9 +67,12 @@ public class AdapterSteps extends RecyclerView.Adapter<AdapterSteps.RecipeSteps>
         @OnClick(R.id.cardViewStep)
         public void klikStep(View v) {
             //Toast.makeText(v.getContext(), "oke cliked", Toast.LENGTH_SHORT).show();
-            Intent intent = new Intent(v.getContext(), DetailStep.class);
-            intent.putExtra("step", new GsonBuilder().create().toJson(steps.get(getAdapterPosition())));
-            v.getContext().startActivity(intent);
+//            Intent intent = new Intent(v.getContext(), DetailStep.class);
+//            intent.putExtra("position", getAdapterPosition());
+//            intent.putExtra("stepList", new GsonBuilder().create().toJson(steps));
+//            v.getContext().startActivity(intent);
+
+            listener.onStepSelected(getAdapterPosition(), new GsonBuilder().create().toJson(steps) );
         }
 
     }
