@@ -25,7 +25,8 @@ import retrofit2.Call;
 
 public class MainActivity extends AppCompatActivity {
 
-    @BindView(R.id.lst_main) RecyclerView recyclerView;
+    @BindView(R.id.lst_main)
+    RecyclerView recyclerView;
     private List<RecipeModel> recipes = new ArrayList<>();
 
     private static final String TAG = "MainActivity";
@@ -44,15 +45,14 @@ public class MainActivity extends AppCompatActivity {
         recyclerView.setAdapter(adapterRecipe);
 
         //onRestore
-        if (savedInstanceState != null){
+        if (savedInstanceState != null) {
             recipes.addAll(Arrays.asList(new GsonBuilder().create().fromJson(savedInstanceState.getString("recipedata"), RecipeModel[].class)));
             adapterRecipe.notifyDataSetChanged();
             recyclerView.getLayoutManager().onRestoreInstanceState(savedInstanceState.getParcelable("recyclerState"));
-            Log.d(TAG, "onCreate: PRINTED 1");
 
             return;
         }
-            getAllMenu();
+        getAllMenu();
 
     }
 
@@ -66,7 +66,7 @@ public class MainActivity extends AppCompatActivity {
         super.onSaveInstanceState(outState);
     }
 
-    public void getAllMenu(){
+    public void getAllMenu() {
 
         new AsyncTask<String, String, String>() {
             @Override
@@ -77,11 +77,8 @@ public class MainActivity extends AppCompatActivity {
                 //for movie popular
                 Call<List<RecipeModel>> recipeModel = retrofitInterface.getRecipe();
                 try {
-                   // recipes = recipeModel.execute().body();
+                    // recipes = recipeModel.execute().body();
                     recipes.addAll(recipeModel.execute().body());
-                    for (RecipeModel data:recipes) {
-                        Log.v("PRINTED 2", "" +data.getName());
-                    }
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
@@ -98,7 +95,6 @@ public class MainActivity extends AppCompatActivity {
 
 
     }
-
 
 
 }

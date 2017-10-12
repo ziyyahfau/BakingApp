@@ -9,9 +9,11 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.google.android.exoplayer2.DefaultLoadControl;
 import com.google.android.exoplayer2.DefaultRenderersFactory;
 import com.google.android.exoplayer2.ExoPlayerFactory;
@@ -25,11 +27,16 @@ import com.google.android.exoplayer2.upstream.DefaultHttpDataSourceFactory;
 import com.google.android.exoplayer2.util.Util;
 import com.google.gson.GsonBuilder;
 
+import java.util.Arrays;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import noosc.project.otrs.bakingapp.Model.RecipeModel;
 import noosc.project.otrs.bakingapp.Model.StepModel;
 import noosc.project.otrs.bakingapp.R;
+
+import static android.view.View.GONE;
 
 /**
  * Created by Fauziyyah Faturahma on 10/2/2017.
@@ -37,11 +44,19 @@ import noosc.project.otrs.bakingapp.R;
 
 public class DetailStep extends AppCompatActivity {
 
-    @BindView(R.id.judulStep) TextView textJudul;
-    @BindView(R.id.stepInstruction) TextView textStepIntroduction;
-    @BindView(R.id.prevButton) Button buttonPrev;
-    @BindView(R.id.nextButton) Button buttonNext;
-    @BindView(R.id.video_view) SimpleExoPlayerView playerView;
+    @BindView(R.id.judulStep)
+    TextView textJudul;
+    @BindView(R.id.stepInstruction)
+    TextView textStepIntroduction;
+    @BindView(R.id.prevButton)
+    Button buttonPrev;
+    @BindView(R.id.nextButton)
+    Button buttonNext;
+    @BindView(R.id.video_view)
+    SimpleExoPlayerView playerView;
+    @BindView(R.id.thumbnailsView)
+    ImageView imageView;
+
 
 
     private SimpleExoPlayer player;
@@ -61,33 +76,57 @@ public class DetailStep extends AppCompatActivity {
         setContentView(R.layout.detail_step);
         ButterKnife.bind(this);
 
-//        //untuk ngambil banyaknya step
-//        String stepJson = getIntent().getExtras().getString("step");
-//        StepModel stepModel = new GsonBuilder().create().fromJson(stepJson, StepModel.class);
-
         //untuk ngambil banyaknya position
         position = getIntent().getExtras().getInt("position");
 
-        String stepListJson =  getIntent().getExtras().getString("stepList");
+        String stepListJson = getIntent().getExtras().getString("stepList");
         stepList = new GsonBuilder().create().fromJson(stepListJson, StepModel[].class);
         StepModel stepModel = stepList[position];
 
         stepModel.getShortDescription();
         setTitle(stepModel.getShortDescription());
-        Log.v("STEP MODEL", "" + stepModel.getShortDescription());
 
         textJudul.setText(stepModel.getShortDescription());
         textStepIntroduction.setText(stepModel.getDescription());
         videoUrl = stepModel.getVideoURL();
-        Log.d(TAG, "TES ID: "+stepModel.getId());
 
-        if (position==0){
-            buttonPrev.setVisibility(View.GONE);
+        //for thumbnails
+
+        if (!stepModel.getThumbnailURL().equals("")){
+
+
+            Glide.with(this)
+                    .load(stepModel.getThumbnailURL())
+                    .placeholder(R.drawable.ic_muffin)
+                    .dontAnimate()
+                    .diskCacheStrategy(DiskCacheStrategy.SOURCE)
+                    .centerCrop()
+                    .into(imageView);
+        }
+        else {
+
+            imageView.setVisibility(GONE);
         }
 
-        if(position==stepList.length-1){
-            buttonNext.setVisibility(View.GONE);
+
+        if (position == 0) {
+            buttonPrev.setVisibility(GONE);
         }
+
+        if (position == stepList.length - 1) {
+            buttonNext.setVisibility(GONE);
+        }
+
+        //Restore
+
+        //onRestore
+        if (savedInstanceState != null) {
+            playWhenReady = savedInstanceState.getBoolean("playWhenReady");
+            currentWindow = savedInstanceState.getInt("currentWindow");
+            playbackPosition = savedInstanceState.getLong("playbackPosition");
+
+        }
+
 
     }
 
@@ -101,13 +140,10 @@ public class DetailStep extends AppCompatActivity {
         player.setPlayWhenReady(playWhenReady);
         player.seekTo(currentWindow, playbackPosition);
 
-        if (videoUrl.equals("")){
+        if (videoUrl.equals("")) {
 
-            playerView.setVisibility(View.GONE);
-            Log.d(TAG, "Player: NOT visible");
-        }
-        else {
-            Log.d(TAG, "Player: VISIBLE");
+            playerView.setVisibility(GONE);
+        } else {
 
             playerView.setVisibility(View.VISIBLE);
             Uri uri = Uri.parse(videoUrl);
@@ -183,7 +219,7 @@ public class DetailStep extends AppCompatActivity {
 //        Toast.makeText(this, "Next Step", Toast.LENGTH_SHORT).show();
 
         Intent intent = new Intent(v.getContext(), DetailStep.class);
-        intent.putExtra("position", position+1);
+        intent.putExtra("position", position + 1);
         intent.putExtra("stepList", new GsonBuilder().create().toJson(stepList));
         v.getContext().startActivity(intent);
         finish();
@@ -195,9 +231,24 @@ public class DetailStep extends AppCompatActivity {
 //        Toast.makeText(this, "Prev Step", Toast.LENGTH_SHORT).show();
 
         Intent intent = new Intent(v.getContext(), DetailStep.class);
-        intent.putExtra("position", position-1);
+        intent.putExtra("position", position - 1);
         intent.putExtra("stepList", new GsonBuilder().create().toJson(stepList));
         v.getContext().startActivity(intent);
         finish();
+    }
+
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+
+        super.onSaveInstanceState(outState);
+
+        outState.putInt("currentWindow", currentWindow );
+        outState.putBoolean("playWhenReady", playWhenReady);
+        outState.putLong("playbackPosition", playbackPosition);
+
+
+
+
     }
 }

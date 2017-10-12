@@ -1,12 +1,10 @@
 package noosc.project.otrs.bakingapp.Adapter;
 
-import android.content.Intent;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.google.gson.GsonBuilder;
 
@@ -18,8 +16,6 @@ import butterknife.OnClick;
 import noosc.project.otrs.bakingapp.Model.StepModel;
 import noosc.project.otrs.bakingapp.R;
 import noosc.project.otrs.bakingapp.StepListener;
-import noosc.project.otrs.bakingapp.UI.DetailRecipe;
-import noosc.project.otrs.bakingapp.UI.DetailStep;
 
 /**
  * Created by Fauziyyah Faturahma on 9/27/2017.
@@ -72,7 +68,7 @@ public class AdapterSteps extends RecyclerView.Adapter<AdapterSteps.RecipeSteps>
 //            intent.putExtra("stepList", new GsonBuilder().create().toJson(steps));
 //            v.getContext().startActivity(intent);
 
-            listener.onStepSelected(getAdapterPosition(), new GsonBuilder().create().toJson(steps) );
+            listener.onStepSelected(getAdapterPosition(), new GsonBuilder().create().toJson(steps));
         }
 
     }

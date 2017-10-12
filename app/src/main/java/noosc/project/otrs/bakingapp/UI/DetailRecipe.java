@@ -30,8 +30,10 @@ import noosc.project.otrs.bakingapp.StepListener;
  */
 public class DetailRecipe extends AppCompatActivity implements StepListener {
 
-    @BindView(R.id.lstIngredients) RecyclerView recyclerViewIngredients;
-    @BindView(R.id.lstSteps) RecyclerView recyclerViewSteps;
+    @BindView(R.id.lstIngredients)
+    RecyclerView recyclerViewIngredients;
+    @BindView(R.id.lstSteps)
+    RecyclerView recyclerViewSteps;
     private boolean twoPanel;
 
     private static final String TAG = "DetailRecipe";
@@ -47,7 +49,6 @@ public class DetailRecipe extends AppCompatActivity implements StepListener {
         RecipeModel recipeModel = new GsonBuilder().create().fromJson(recipesJson, RecipeModel.class);
         recipeModel.getName();
         setTitle(recipeModel.getName());
-        Log.v("RECIPE MODEL", "" + recipeModel.getName());
 
         List<IngredientModel> ingredients = recipeModel.getIngredients();
         List<StepModel> steps = recipeModel.getSteps();
@@ -75,8 +76,6 @@ public class DetailRecipe extends AppCompatActivity implements StepListener {
             fragmentManager = getSupportFragmentManager();
             fragmentManager.beginTransaction().replace(R.id.detailStepContent, new Fragment()).commit();
         }
-
-        Log.d(TAG, "onCreate: Print two panel = " + twoPanel);
     }
 
     @Override
@@ -89,8 +88,7 @@ public class DetailRecipe extends AppCompatActivity implements StepListener {
             fragment.setArguments(bundle);
             //for connect recipe activity and recipe fragments
             fragmentManager.beginTransaction().replace(R.id.detailStepContent, fragment).commit();
-        }
-        else {
+        } else {
             Intent intent = new Intent(this, DetailStep.class);
             intent.putExtra("position", position);
             intent.putExtra("stepList", stepListJson);

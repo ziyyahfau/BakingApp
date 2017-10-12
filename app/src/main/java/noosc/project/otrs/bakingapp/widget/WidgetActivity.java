@@ -17,22 +17,22 @@ import noosc.project.otrs.bakingapp.R;
  */
 public class WidgetActivity extends AppWidgetProvider {
     private static final String TAG = "WidgetActivity";
+
     static void updateAppWidget(Context context, AppWidgetManager appWidgetManager,
                                 int appWidgetId) {
 
         String widgetText = WidgetActivityConfigureActivity.loadTitlePref(context, appWidgetId);
         // Construct the RemoteViews object
-        Log.d(TAG, "updateAppWidget: "+widgetText);
-        if(widgetText !=null) {
+        if (widgetText != null) {
             RecipeModel recipeModel = new GsonBuilder().create().fromJson(widgetText, RecipeModel.class);
 
             RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.widget_activity);
             views.setTextViewText(R.id.titleIngredient, recipeModel.getName());
             String listIngredientStr = "";
             for (int i = 0; i < recipeModel.getIngredients().size(); i++) {
-                listIngredientStr+="- "+recipeModel.getIngredients().get(i).getIngredient()+"\n";
+                listIngredientStr += "- " + recipeModel.getIngredients().get(i).getIngredient() + "\n";
             }
-            views.setTextViewText(R.id.isiIngredient,listIngredientStr);
+            views.setTextViewText(R.id.isiIngredient, listIngredientStr);
 
             // Instruct the widget manager to update the widget
             appWidgetManager.updateAppWidget(appWidgetId, views);

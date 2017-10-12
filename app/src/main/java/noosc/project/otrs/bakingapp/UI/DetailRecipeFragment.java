@@ -11,8 +11,11 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.google.android.exoplayer2.DefaultLoadControl;
 import com.google.android.exoplayer2.DefaultRenderersFactory;
 import com.google.android.exoplayer2.ExoPlayerFactory;
@@ -32,17 +35,26 @@ import butterknife.OnClick;
 import noosc.project.otrs.bakingapp.Model.StepModel;
 import noosc.project.otrs.bakingapp.R;
 
+import static android.view.View.GONE;
+
 /**
  * Created by Fauziyyah Faturahma on 10/6/2017.
  */
 
 public class DetailRecipeFragment extends Fragment {
 
-    @BindView(R.id.judulStep) TextView textJudul;
-    @BindView(R.id.stepInstruction) TextView textStepIntroduction;
-    @BindView(R.id.prevButton) Button buttonPrev;
-    @BindView(R.id.nextButton) Button buttonNext;
-    @BindView(R.id.video_view) SimpleExoPlayerView playerView;
+    @BindView(R.id.judulStep)
+    TextView textJudul;
+    @BindView(R.id.stepInstruction)
+    TextView textStepIntroduction;
+    @BindView(R.id.prevButton)
+    Button buttonPrev;
+    @BindView(R.id.nextButton)
+    Button buttonNext;
+    @BindView(R.id.video_view)
+    SimpleExoPlayerView playerView;
+    @BindView(R.id.thumbnailsView)
+    ImageView imageView;
 
     private SimpleExoPlayer player;
     private boolean playWhenReady;
@@ -62,21 +74,36 @@ public class DetailRecipeFragment extends Fragment {
 
         position = getArguments().getInt("position");
 
-        String stepListJson =  getArguments().getString("stepList");
+        String stepListJson = getArguments().getString("stepList");
         stepList = new GsonBuilder().create().fromJson(stepListJson, StepModel[].class);
         StepModel stepModel = stepList[position];
 
         stepModel.getShortDescription();
         getActivity().setTitle(stepModel.getShortDescription());
-        Log.v("STEP MODEL", "" + stepModel.getShortDescription());
 
         textJudul.setText(stepModel.getShortDescription());
         textStepIntroduction.setText(stepModel.getDescription());
         videoUrl = stepModel.getVideoURL();
-        Log.d(TAG, "TES ID: "+stepModel.getId());
 
         buttonPrev.setVisibility(View.GONE);
         buttonNext.setVisibility(View.GONE);
+
+        //for thumbnails
+
+        if (!stepModel.getThumbnailURL().equals("")) {
+
+
+            Glide.with(this)
+                    .load(stepModel.getThumbnailURL())
+                    .placeholder(R.drawable.ic_muffin)
+                    .dontAnimate()
+                    .diskCacheStrategy(DiskCacheStrategy.SOURCE)
+                    .centerCrop()
+                    .into(imageView);
+        } else {
+
+            imageView.setVisibility(GONE);
+        }
 
         return view;
     }
@@ -91,13 +118,10 @@ public class DetailRecipeFragment extends Fragment {
         player.setPlayWhenReady(playWhenReady);
         player.seekTo(currentWindow, playbackPosition);
 
-        if (videoUrl.equals("")){
+        if (videoUrl.equals("")) {
 
             playerView.setVisibility(View.GONE);
-            Log.d(TAG, "Player: NOT visible");
-        }
-        else {
-            Log.d(TAG, "Player: VISIBLE");
+        } else {
 
             playerView.setVisibility(View.VISIBLE);
             Uri uri = Uri.parse(videoUrl);
@@ -173,7 +197,7 @@ public class DetailRecipeFragment extends Fragment {
 //        Toast.makeText(this, "Next Step", Toast.LENGTH_SHORT).show();
 
         Intent intent = new Intent(v.getContext(), DetailStep.class);
-        intent.putExtra("position", position+1);
+        intent.putExtra("position", position + 1);
         intent.putExtra("stepList", new GsonBuilder().create().toJson(stepList));
         v.getContext().startActivity(intent);
 
@@ -185,7 +209,7 @@ public class DetailRecipeFragment extends Fragment {
 //        Toast.makeText(this, "Prev Step", Toast.LENGTH_SHORT).show();
 
         Intent intent = new Intent(v.getContext(), DetailStep.class);
-        intent.putExtra("position", position-1);
+        intent.putExtra("position", position - 1);
         intent.putExtra("stepList", new GsonBuilder().create().toJson(stepList));
         v.getContext().startActivity(intent);
     }

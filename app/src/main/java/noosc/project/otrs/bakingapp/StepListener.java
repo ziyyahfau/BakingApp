@@ -7,4 +7,4 @@ package noosc.project.otrs.bakingapp;
 public interface StepListener {
 
     void onStepSelected(int position, String stepListJson);
-        }
+}

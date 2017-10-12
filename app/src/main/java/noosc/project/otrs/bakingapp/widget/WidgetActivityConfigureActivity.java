@@ -11,8 +11,6 @@ import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
-import android.view.View;
-import android.widget.EditText;
 import android.widget.RemoteViews;
 
 import com.google.gson.GsonBuilder;
@@ -23,7 +21,6 @@ import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import noosc.project.otrs.bakingapp.Adapter.AdapterRecipe;
 import noosc.project.otrs.bakingapp.Adapter.AdapterWidget;
 import noosc.project.otrs.bakingapp.Model.RecipeModel;
 import noosc.project.otrs.bakingapp.Network.Network;
@@ -41,7 +38,8 @@ public class WidgetActivityConfigureActivity extends Activity implements WidgetL
     private static final String TAG = "WidgetActivityConfigure";
     private AdapterWidget adapterWidget;
 
-    @BindView(R.id.lst_widget)RecyclerView recyclerWidget;
+    @BindView(R.id.lst_widget)
+    RecyclerView recyclerWidget;
 
     private static final String PREFS_NAME = "noosc.project.otrs.bakingapp.widget.WidgetActivity";
     private static final String PREF_PREFIX_KEY = "appwidget_";
@@ -64,7 +62,6 @@ public class WidgetActivityConfigureActivity extends Activity implements WidgetL
     static String loadTitlePref(Context context, int appWidgetId) {
         SharedPreferences prefs = context.getSharedPreferences(PREFS_NAME, 0);
         String titleValue = prefs.getString(PREF_PREFIX_KEY + appWidgetId, null);
-        Log.d(TAG, "loadTitlePref: "+titleValue);
         return titleValue;
         /*if (titleValue != null) {
             return titleValue;
@@ -114,7 +111,7 @@ public class WidgetActivityConfigureActivity extends Activity implements WidgetL
         getAllMenu();
     }
 
-    public void getAllMenu(){
+    public void getAllMenu() {
 
         new AsyncTask<String, String, String>() {
             @Override
@@ -127,9 +124,6 @@ public class WidgetActivityConfigureActivity extends Activity implements WidgetL
                 try {
                     // recipes = recipeModel.execute().body();
                     recipes.addAll(recipeModel.execute().body());
-                    for (RecipeModel data:recipes) {
-                        Log.v("PRINTED 2", "" +data.getName());
-                    }
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
@@ -152,9 +146,9 @@ public class WidgetActivityConfigureActivity extends Activity implements WidgetL
         views.setTextViewText(R.id.titleIngredient, recipeModel.getName());
         String listIngredientStr = "";
         for (int i = 0; i < recipeModel.getIngredients().size(); i++) {
-            listIngredientStr+="- "+recipeModel.getIngredients().get(i).getIngredient()+"\n";
+            listIngredientStr += "- " + recipeModel.getIngredients().get(i).getIngredient() + "\n";
         }
-        views.setTextViewText(R.id.isiIngredient,listIngredientStr);
+        views.setTextViewText(R.id.isiIngredient, listIngredientStr);
 
 
         AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(getBaseContext());

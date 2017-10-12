@@ -11,7 +11,7 @@ public class Network {
 
     public static final String URL = "https://d17h27t6h515a5.cloudfront.net/topher/2017/May/59121517_baking/";
 
-    public static Retrofit getRetrofit(){
+    public static Retrofit getRetrofit() {
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl(URL)
                 .addConverterFactory(GsonConverterFactory.create())
