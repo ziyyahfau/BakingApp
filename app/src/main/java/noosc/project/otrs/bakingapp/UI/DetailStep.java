@@ -126,8 +126,6 @@ public class DetailStep extends AppCompatActivity {
             playbackPosition = savedInstanceState.getLong("playbackPosition");
 
         }
-
-
     }
 
     private void initializePlayer() {
@@ -242,13 +240,14 @@ public class DetailStep extends AppCompatActivity {
     protected void onSaveInstanceState(Bundle outState) {
 
         super.onSaveInstanceState(outState);
+//
+//        outState.putInt("currentWindow", currentWindow );
+//        outState.putBoolean("playWhenReady", playWhenReady);
+//        outState.putLong("playbackPosition", playbackPosition);
 
-        outState.putInt("currentWindow", currentWindow );
-        outState.putBoolean("playWhenReady", playWhenReady);
-        outState.putLong("playbackPosition", playbackPosition);
-
-
-
+        outState.putInt("currentWindow", player.getCurrentWindowIndex() );
+        outState.putBoolean("playWhenReady", player.getPlayWhenReady());
+        outState.putLong("playbackPosition", player.getCurrentPosition());
 
     }
 }
